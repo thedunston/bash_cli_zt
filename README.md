@@ -9,6 +9,7 @@ It includes:
 3. Deleting networks
 4. Peer management including listing all peers, authorized peers, and unauthorized with the option to authorize a peer.
 5. Deleting a peer from the ZT network is not possible so a hack I use is to set the peer to unathorized and set the IP to 127.0.0.100.  That is only used when listing members under Peer Management so those don't display in the output.
+6. Editing ACLs using a format I created.  Still needs to support more rules...I just don't use many that require it.
 
 Requirements:
 - curl
