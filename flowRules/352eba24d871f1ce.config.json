@@ -1,0 +1,1 @@
+{"rules": [{"etherType": 2054, "not": true,"or": false,"type": "MATCH_ETHERTYPE"},{"etherType": 2048,"not": true,"or": false,"type": "MATCH_ETHERTYPE"},{"etherType": 34525,"not": true,"or": false,"type": "MATCH_ETHERTYPE"},{"type": "ACTION_DROP"},{"type": "ACTION_ACCEPT"}],"capabilities": [],"tags": []}
