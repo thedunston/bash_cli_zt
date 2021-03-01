@@ -159,20 +159,30 @@ case "${todo}" in
 
 		fi
 
+		function cleanup() {
+
+			rm -f ztconfig-${editNet}.tmp
+			rm -f ${editNet}.config.json
+
+		}
 		clear
 		read -p "Would you like to commit the changes? Y|n: " goflow
 
 		if [[ "${goflow}" =~ ^(y|Y)$ ]]; then
 
 			bash ztrules.bash ${editNet}.config
+			cleanup
 
-			echo "Rules committed.  Be sure to test...please wait..."
-			sleep 3
+			cd ..
+			echo ""
+			read -p "Rules committed.  Be sure to test. Press Enter when done."
+			mainMenu
 		else
 
-			echo "Changes will not be committed...Please Wait..."
-			sleep 2
+			echo ""
+			read -p "Changes will not be committed. Press enter when done."
 
+			cd ..
 			mainMenu
 
 		fi

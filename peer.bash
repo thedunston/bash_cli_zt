@@ -144,8 +144,8 @@ function peerManage() {
 					while read -r line; do
 					        echo "$SELECTION) $line"
 					        ((SELECTION++))
-					echo "[E] Exit"
 					done <<< "$PEERS"
+					echo "[E] Exit"
 					
 					((SELECTION--))
 					
