@@ -24,7 +24,12 @@ Usage:
 
 bash ztnetworks.bash
 
-This is not that modular and needs some code cleanup.  I'll make things more modular as I have time to work on it. It works for how I use it and I'll upgrade as I use more features or if folks have requests.
+Features:
+
+- Create networks
+- Update network description, IP assignments and manage routes
+- Edit ACLs using custom format only for IPv4
+- Manage Peers
 
 I teach full-time and working on a degree so will work on this as I have time.  I hope it helps someone and folks contribute code.
 
