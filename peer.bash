@@ -99,7 +99,7 @@ function peerManage() {
 	
 			done
 
-			if [[ -f ${tmpPeerFile} ]]; then
+			if [[ "$(cat ${tmpPeerFile})" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} ]]; then
 
 				cat ${tmpPeerFile} | column -t -s " "
 

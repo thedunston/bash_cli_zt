@@ -2,20 +2,24 @@
 
 # List networks in ZT
 
-rm -f /tmp/file.tmp
+tmpfile='/tmp/file.tmp'
+
+rm -f ${tmpfile}
+echo "   Network___Description___RangeStart___RangeEnd" > ${tmpfile}
 
 for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/" | sed -e 's/\[//g' -e 's/"//g' -e 's/,/ /g' -e 's/\]//g'
 ); do
 
         desc=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/$i" |jq '.name' | sed 's/"//g')
+	ipAssign=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/$i" |jq -r '.ipAssignmentPools[].ipRangeStart,.ipAssignmentPools[].ipRangeEnd' | paste -sd, -  | sed 's/,/___/g')
 
-        echo "$i   $desc" >> /tmp/file.tmp
-
+	echo "   ${i}___${desc}___${ipAssign}" >> ${tmpfile}
 
 done
 # Dynamic menu from:
 # https://gist.github.com/nhoag/c202b3dd346668d6d8c1
-ENTITIES=$(cat /tmp/file.tmp)
+cat ${tmpfile} | column -t -s "___" |head -1
+ENTITIES=$(cat ${tmpfile} | grep -v "   Network___" | column -t -s "___")
 SELECTION=1
 
 while read -r line; do
@@ -23,13 +27,12 @@ while read -r line; do
 	((SELECTION++))
 done <<< "$ENTITIES"
 
-
  ((SELECTION--))
 
  echo
  printf 'Hit Enter when done: '
 read -r opt
-if [[ `seq 1 $SELECTION` =~ $opt ]]; then
+if [[ $(seq 1 $SELECTION) =~ $opt ]]; then
 
 # Get the selection value
 net=$(sed -n "${opt}p" <<< "$ENTITIES")
