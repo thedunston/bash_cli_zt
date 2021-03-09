@@ -20,9 +20,9 @@ ipcalc is used to manage the creation of network settings, check for valid masks
 
 jq is used to create the JSON object for most queries. I'll get around to doing it for all queries.  It is mixed because as I was learning the ZT api, I used manual queries and then started using jq the more I learned how to use it.
 
-Usage:
+Usage.  You need to run this as root to access the files needed for access to your ZT Controller:
 
-bash ztnetworks.bash
+sudo bash ztnetworks.bash
 
 Features:
 
@@ -36,4 +36,3 @@ I teach full-time and working on a degree so will work on this as I have time.  
 -duane
 
 thedunston@gmail.com
-
