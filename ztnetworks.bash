@@ -50,8 +50,8 @@ function createNet() {
 
 	if [[ "${newNet}" =~ ^\"[0-9a-f]{16}\" ]]; then
 
-		echo "Network created. ID: ${newNet}...Please wait..."
-		sleep 2
+		echo "Network created. ID: ${newNet}."
+		read -p "Press ENTER when done."
 
 		get_mask ${ipnet} ${newNet}
 
@@ -170,7 +170,6 @@ function  mainMenu() {
 
 			# Query to see if it was deleted
 			thenDelete=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -X DELETE "http://localhost:9993/cotroller/network/${delnet}")
-			clear
 
 			if [[ "${thenDelete}" == "{}" ]]; then
 
@@ -277,8 +276,8 @@ function  mainMenu() {
 		*)
 
 
-			echo "Invalid option...Please wait..."
-			sleep 2
+			echo "Invalid option."
+			read -p "Press ENTER when done."
 
 		;;
 

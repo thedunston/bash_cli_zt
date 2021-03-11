@@ -99,7 +99,7 @@ function peerManage() {
 	
 			done
 
-			if [[ "$(cat ${tmpPeerFile})" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} ]]; then
+			if [[ "$(cat ${tmpPeerFile})" =~ [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3} ]]; then
 
 				cat ${tmpPeerFile} | column -t -s " "
 
@@ -107,8 +107,8 @@ function peerManage() {
 
 			else
 
-				echo "There are no members...please wait..."
-				sleep 2
+				echo "There are no members."
+				read -p "Press ENTER when done."
 				peerManage
 
 			fi
@@ -185,8 +185,8 @@ function peerManage() {
 
 				else 
 
-					echo "There are no unauthorized peers...please wait..."
-					sleep 2
+					echo "There are no unauthorized peers."
+					read -p "Press ENTER when done."
 	
 				fi
 	
@@ -221,15 +221,15 @@ function peerManage() {
 	
 					if [[ ! -s  ${tmpPeerFile} ]]; then
 	
-						echo "There are no authorized peers...please wait..."
-						sleep 2
+						echo "There are no authorized peers."
+						read -p "Press ENTER when done."
 	
 					else
 	
 						cat ${tmpPeerFile} | column -t -s " "
 						rm -f ${tmpPeerFile}
 						echo ""
-						sleep 2
+						read -p "Press ENTER when done."
 					fi
 
 				fi
@@ -325,8 +325,8 @@ function peerManage() {
 				else 
 
 
-					echo "There are no unauthorized peers...please wait..."
-					sleep 2
+					echo "There are no unauthorized peers."
+					read -p "Press ENTER when done."
 
 	
 				fi
@@ -404,10 +404,10 @@ function peerManage() {
 
 					else
 
-						echo "Peer: ${themem} was not removed....please wait..."
+						echo "Peer: ${themem} was not removed."
 						echo "Authorized => ${delPeer}"
 						echo "IP => ${reIP}"
-						sleep 4
+						read -p "Press ENTER when done."
 						peerManage
 
 					fi
@@ -421,8 +421,8 @@ function peerManage() {
 
 			else
 
-				echo "There are no peers to delete...please wait..."
-				sleep 2
+				echo "There are no peers to delete."
+				read -p "Press ENTER when done."
 
 	
 			fi
@@ -450,7 +450,7 @@ function peerManage() {
 		*)
 
 			echo "Invalid Option!"
-			sleep 2
+			read -p "Press ENTER when done."
 			peerManage
 
 		;;

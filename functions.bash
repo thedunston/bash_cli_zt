@@ -128,8 +128,8 @@ Hosts/Net: 2046                  Class C, Private Internet
 
 	if [[ "$(ipcalc ${1}/${netmask})" =~ "INVALID MASK" ]]; then
 
-		echo "Invalid mask...please wait."
-		sleep 2
+		echo "Invalid mask."
+		read -p "Press ENTER when done."
 		get_mask
 
 	else 
@@ -248,8 +248,8 @@ function genIP() {
 
 		if [[ "$(ipcalc ${theip})" =~ "INVALID" ]]; then
 
-			echo "Invalid IP...please wait."
-			sleep 2
+			echo "Invalid IP."
+			read -p "Press ENTER when done."
 			user_ip
 
 		else
@@ -352,8 +352,8 @@ function createNet() {
 
 	if [[ "${newNet}" =~ ^\"[0-9a-f]{16}\" ]]; then
 
-		echo "Network created. ID: ${newNet}...Please wait..."
-		sleep 2
+		echo "Network created. ID: ${newNet}."
+		read -p "Press ENTER when done."
 
 		get_mask ${ipnet} ${newNet}
 
