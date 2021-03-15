@@ -4,6 +4,7 @@
 # Oscar's Blog was very helpful in learning to query and edit ZT API
 # https://blog.ogarcia.me/zerotier/
 
+source "functions.bash"
 rm /tmp/file.tmp
 
 echo ""
