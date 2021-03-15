@@ -1,7 +1,7 @@
 #!/bin/bash
 
-
 # Script to parse ZT Rules
+source "../functions.bash"
 
 the_network="$(echo ${1} | cut -d\. -f1)"
 
@@ -245,6 +245,6 @@ if [[ $? -ne 0 ]]; then
 else
 
 	j="$(cat ${config_file})"
-	curl -X POST  -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d "${j}" "http://localhost:9993/controller/network/${the_network}"
+	curl -X POST  -H "X-ZT1-Auth: $(cat ${ztToken})" -d "${j}" "${ztAddress}/${the_network}"
 
 fi

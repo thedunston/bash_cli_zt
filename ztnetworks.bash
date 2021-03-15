@@ -46,7 +46,7 @@ function createNet() {
 	newNet=$(curl -s -X POST \
 	-H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" \
 	-d '{"name": "'"${netDesc}"'"}' \
-	"http://localhost:9993/controller/network/${CONTROLLER_ID}______" | jq '(.nwid)')
+	"${ztAddress}/${CONTROLLER_ID}______" | jq '(.nwid)')
 
 	if [[ "${newNet}" =~ ^\"[0-9a-f]{16}\" ]]; then
 
@@ -101,7 +101,7 @@ function updateDesc() {
 	updateNet=$(curl -s -X POST \
 	-H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" \
 	-d "$json" \
-	"http://localhost:9993/controller/network/${theNet}" | jq -r '(.name)')
+	"${ztAddress}/${theNet}" | jq -r '(.name)')
 
 	if [[ "${updateNet}" == "${netDesc}" ]]; then
 
@@ -139,7 +139,8 @@ function  mainMenu() {
 	echo "6. Manage Routes"
 	echo "7. Update Network Description"
 	echo "8. Update Network IP Assignment"
-	echo "[E]. Exit"
+	echo "[A]dvanced Options (edit /var/lib/zerotier/local.conf"
+	echo "[E]xit"
 	read -p  "Please select a numeric value: " todo
 
 	case "${todo}" in
@@ -166,10 +167,10 @@ function  mainMenu() {
 		if [[ "${todelete}" == "y" ||  "${todelete}" == "yes" ]]; then
 
 			# Delete the network
-			curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -X DELETE "http://localhost:9993/cotroller/network/${delnet}"
+			curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -X DELETE "${ztAddress}/${delnet}"
 
 			# Query to see if it was deleted
-			thenDelete=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -X DELETE "http://localhost:9993/cotroller/network/${delnet}")
+			thenDelete=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -X DELETE "${ztAddress}/${delnet}")
 
 			if [[ "${thenDelete}" == "{}" ]]; then
 
@@ -264,6 +265,12 @@ function  mainMenu() {
 
 
 			updateNetIP
+
+		;;
+
+		a|A)
+
+			bash advancedZT.bash
 
 		;;
 		e|E)

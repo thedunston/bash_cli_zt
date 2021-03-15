@@ -2,16 +2,17 @@
 
 # List networks in ZT
 
+source "functions.bash"
 tmpfile='/tmp/file.tmp'
 
 rm -f ${tmpfile}
 echo "   Network___Description___RangeStart___RangeEnd" > ${tmpfile}
 
-for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/" | sed -e 's/\[//g' -e 's/"//g' -e 's/,/ /g' -e 's/\]//g'
+for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/" | sed -e 's/\[//g' -e 's/"//g' -e 's/,/ /g' -e 's/\]//g'
 ); do
 
-        desc=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/$i" |jq '.name' | sed 's/"//g')
-	ipAssign=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/$i" |jq -r '.ipAssignmentPools[].ipRangeStart,.ipAssignmentPools[].ipRangeEnd' | paste -sd, -  | sed 's/,/___/g')
+        desc=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/$i" |jq '.name' | sed 's/"//g')
+	ipAssign=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/$i" |jq -r '.ipAssignmentPools[].ipRangeStart,.ipAssignmentPools[].ipRangeEnd' | paste -sd, -  | sed 's/,/___/g')
 
 	echo "   ${i}___${desc}___${ipAssign}" >> ${tmpfile}
 

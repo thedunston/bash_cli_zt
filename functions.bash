@@ -1,6 +1,22 @@
+# Various functions for the program
+
+# ZeroTier network address
+ztAddress='http://127.0.0.1:9993/controller/network'
+
+# Token file
+ztToken='/var/lib/zerotier-one/authtoken.secret'
+
 # Temp File
 tmpfile='tmp/znetwork.tmp'
 ztnetFile='tmp/ztcurrent.txt'
+
+# ZT Directory
+ztDir='/var/lib/zerotier-one'
+
+# local.conf file 
+localConfig=''${ztDir}'/local.conf'
+localConfigTemplate='templates/local.conf.template'
+bkLocalConfig='tmp/local.conf.tmp'
 
 # Create temp directory
 if  [[ ! -d "tmp" ]]; then
@@ -32,13 +48,29 @@ function ip_chk() {
 
 }
 
+function ipnet_chk() {
+
+	if [[ ${1} =~ ^(e|E)$ ]]; then
+
+		${2}
+
+	fi
+
+	if [[ "$(ipcalc ${1})" =~ "INVALID" ]]; then
+
+		echo "Invalid network/host entered."
+	      	# Take the user back to the function.
+		${2}
+
+	fi
+
+}
 
 function allDone() {
 
 	read -p "${1}. Press Enter to finish"
 	${2}
 }
-
 
 function del_temp() {
 
@@ -49,8 +81,6 @@ function del_temp() {
 	fi
 
 }
-
-
 
 # Function to check if json object created properly
 function chk_jq() {
@@ -161,7 +191,7 @@ Hosts/Net: 2046                  Class C, Private Internet
 
 			assignIP=$(curl -s -X POST \
 				-H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" \
-				-d "$json" "http://localhost:9993/controller/network/${cnet}" | jq -r '(.ipAssignmentPools[0].ipRangeEnd)')
+				-d "$json" "${ztAddress}/${cnet}" | jq -r '(.ipAssignmentPools[0].ipRangeEnd)')
 
 			route='""'
 
@@ -169,13 +199,13 @@ Hosts/Net: 2046                  Class C, Private Internet
 			json=$(jq -n --arg target "${network}"  --arg route "${route}" '{ routes:[{target: $target, via:$route}] }')
 
 			# Set LAN ROUTE
-			lanRoute=$(curl -s -X POST -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d "$json" "http://localhost:9993/controller/network/${cnet}" | jq -r '(.routes[0].target)')
+			lanRoute=$(curl -s -X POST -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d "$json" "${ztAddress}/${cnet}" | jq -r '(.routes[0].target)')
 
 			# Turn on DHCP for auto assigning IPs
 			json=$(jq -n --arg dhcpOn "true" '{ v4AssignMode: { zt : $dhcpOn } }')
 
 			 # Set LAN ROUTE
-                        autoIP=$(curl -s -X POST -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d "$json" "http://localhost:9993/controller/network/${cnet}" |jq -r '(.v4AssignMode.zt)')
+                        autoIP=$(curl -s -X POST -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d "$json" "${ztAddress}/${cnet}" |jq -r '(.v4AssignMode.zt)')
 
 			# Check if network returns the same settings provided.
 			if [[ ("${assignIP}" == "${max}" && "${lanRoute}" == "${network}" && "${autoIP}" == "true") ]]; then
@@ -270,11 +300,11 @@ function allNets() {
 	echo "   Network___Description___RangeStart___RangeEnd" > ${tmpfile}
 
 	# Get all Networks
-	for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/" | egrep -o '[a-f0-9]{16}'); do
+	for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/" | egrep -o '[a-f0-9]{16}'); do
 
 		# Get the network's name
-	        desc=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/$i" |jq '.name' | sed 's/"//g')
-	        ipAssign=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/$i" |jq -r '.ipAssignmentPools[].ipRangeStart,.ipAssignmentPools[].ipRangeEnd' | paste -sd, -  | sed 's/,/___/g')
+	        desc=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/$i" |jq '.name' | sed 's/"//g')
+	        ipAssign=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/$i" |jq -r '.ipAssignmentPools[].ipRangeStart,.ipAssignmentPools[].ipRangeEnd' | paste -sd, -  | sed 's/,/___/g')
 
 		echo "   ${i}___${desc}___${ipAssign}" >> ${tmpfile}
 
@@ -302,7 +332,7 @@ function allNets() {
 
 	if [[ ${opt} =~ ^(b|B)$ ]]; then
 
-		mainMenu
+		${1}
 	fi
 
 	checkNum ${opt}
@@ -348,7 +378,7 @@ function createNet() {
 	newNet=$(curl -s -X POST \
 	-H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" \
 	-d '{"name": "'"${netDesc}"'"}' \
-	"http://localhost:9993/controller/network/${CONTROLLER_ID}______" | jq '(.nwid)')
+	"${ztAddress}/${CONTROLLER_ID}______" | jq '(.nwid)')
 
 	if [[ "${newNet}" =~ ^\"[0-9a-f]{16}\" ]]; then
 
@@ -403,7 +433,7 @@ function updateDesc() {
 	updateNet=$(curl -s -X POST \
 	-H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" \
 	-d "$json" \
-	"http://localhost:9993/controller/network/${theNet}" | jq -r '(.name)')
+	"${ztAddress}/${theNet}" | jq -r '(.name)')
 
 	if [[ "${updateNet}" == "${netDesc}" ]]; then
 
@@ -414,5 +444,97 @@ function updateDesc() {
 		allDone "${updateNet} description was not updated" mainMenu
 
 	fi
+
+}
+
+# List interfaces
+function listIf() { 
+
+	ENTITIES=$(ip addr |egrep '^[0-9]:{1,2}' | cut -d: -f2 | sed 's/ //g')
+        SELECTION=1
+
+        while read -r line; do
+
+                echo "$SELECTION) $line"
+                ((SELECTION++))
+
+        done <<< "$ENTITIES"
+
+                echo "B) To go back to the main menu"
+        ((SELECTION--))
+
+        echo
+        printf 'Select the number next to the interface to Block or press B to go Back: '
+        read -r opt
+
+        if [[ ${opt} =~ ^(b|B)$ ]]; then
+
+                manageIF
+        fi
+
+        checkNum ${opt}
+
+        if [[ $(seq 1 $SELECTION) =~ $opt ]]; then
+
+                # Get the selection value
+                intF=$(sed -n "${opt}p" <<< "$ENTITIES")
+
+        fi
+
+}
+
+# List current interfaces
+function listLocalConf() { 
+
+	if [[ "${1}" == "interfacePrefixBlacklist" ]]; then
+
+		ENTITIES=$(grep interfacePrefixBlacklist ${localConfig} | egrep -o '\[.*\]' | sed -e 's/\[//g;s/\]//g;s/[",]/ /g' |tr ' ' '\n' |grep '.')
+		msgLocalConf='interface'
+
+	elif [[ "${1}" == "allowManagementFrom" ]]; then
+
+		ENTITIES=$(grep allowManagementFrom ${localConfig} | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}')
+		msgLocalConf='IP or Netowrk'
+
+	else
+
+		advZT
+
+	fi
+
+        SELECTION=1
+
+        while read -r line; do
+
+                echo "$SELECTION) $line"
+                ((SELECTION++))
+
+        done <<< "$ENTITIES"
+
+	echo "B) To go back to the main menu"
+        ((SELECTION--))
+
+        echo
+        printf 'Select the number next to the '${msgLocalConf}': '
+        read -r opt
+
+	# Check if B to go back or numeric
+        if [[ ${opt} =~ ^(b|B)$ ]]; then
+
+                advZT
+        fi
+        if ! [[ ${opt} =~ [0-9] ]]; then
+
+                advZT
+        fi
+
+        checkNum ${opt}
+
+        if [[ $(seq 1 $SELECTION) =~ $opt ]]; then
+
+                # Get the selection value
+                currSetting=$(sed -n "${opt}p" <<< "$ENTITIES")
+
+        fi
 
 }

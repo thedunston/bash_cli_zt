@@ -7,7 +7,7 @@ tmpRouteFile='tmp/ztroutesfile.tmp'
 
 	rm -f tmp/ztexistjson.tmp
 	rm -f tmp/ztexistjson2.tmp
-allNets
+allNets "exit 0"
 
 #theNet=$(echo "${net}" | awk ' { print $1 } ')
 
@@ -25,7 +25,7 @@ function get_routes() {
 	COUNTER=0
 
 	# Get the routes for the network
-	x=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/${theNet}" | jq -r '.routes[].target' |wc -l)
+	x=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}" | jq -r '.routes[].target' |wc -l)
 	
 	# set the number of available routes - 1
 	num=$(($x-1))
@@ -37,8 +37,8 @@ function get_routes() {
 	until [ $COUNTER -gt $num ]
 	do
 	
-		t=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/${theNet}/" | jq -r ".routes[$COUNTER].target")
-		v=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "http://localhost:9993/controller/network/${theNet}/" | jq -r ".routes[$COUNTER].via")
+		t=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/" | jq -r ".routes[$COUNTER].target")
+		v=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/" | jq -r ".routes[$COUNTER].via")
 
     		((COUNTER++))
 
@@ -153,7 +153,7 @@ function menu() {
 				chk_jq
 
 				# Add the route
-				addRoute=$(curl -X POST -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d "${json}" "http://localhost:9993/controller/network/${theNet}"| jq '.routes')
+				addRoute=$(curl -X POST -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d "${json}" "${ztAddress}/${theNet}"| jq '.routes')
 			fi
 
 			if [[ ("${dest}" =~ "${addRoute}" && "${gateway}" =~ "${addRoute}") ]]; then
@@ -201,7 +201,7 @@ function menu() {
 		
 		        if [[ ${opt} =~ ^(b|B)$ ]]; then
 		
-		                menu
+		                exit 0
 		        fi
 			if [[ $(seq 1 $SELECTION) =~ $opt ]]; then
 		
@@ -240,7 +240,7 @@ function menu() {
 				chk_jq
 
 				# Delete the route
-				addRoute=$(curl -X POST -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d "${json}" "http://localhost:9993/controller/network/${theNet}"| jq '.routes')
+				addRoute=$(curl -X POST -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d "${json}" "${ztAddress}/${theNet}"| jq '.routes')
 
 			else 
 
