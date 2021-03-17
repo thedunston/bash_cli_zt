@@ -115,10 +115,8 @@ function updateDesc() {
 
 }
 
+clear
 function  mainMenu() {
-
-
-	clear
 
 	# Remove temp file
 	if [[ -f ${tmpfile} ]]; then
