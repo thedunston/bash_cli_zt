@@ -3,12 +3,13 @@
 # List networks in ZT
 
 source "functions.bash"
-tmpfile='/tmp/file.tmp'
+tmpfile='tmp/file.tmp'
 
 rm -f ${tmpfile}
 echo "   Network___Description___RangeStart___RangeEnd" > ${tmpfile}
 
-for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/" | sed -e 's/\[//g' -e 's/"//g' -e 's/,/ /g' -e 's/\]//g'
+#for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/" | sed -e 's/\[//g' -e 's/"//g' -e 's/,/ /g' -e 's/\]//g'
+for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/" | egrep -o '[a-f0-9]{16}'
 ); do
 
         desc=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/$i" |jq '.name' | sed 's/"//g')

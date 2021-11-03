@@ -5,50 +5,31 @@
 # https://blog.ogarcia.me/zerotier/
 
 source "functions.bash"
-rm /tmp/file.tmp
 
+if [[ -f "${peerTempFile}" ]]; then
+
+	rm "${peerTempFile}"
+
+fi
+
+allNets "exit 0"
+# Get the selected network
+theNet=$(cat 'tmp/ztcurrent.txt')
 echo ""
 echo "#############   PEER MANAGEMENT #################"
 echo "Please wait..."
 clear
 echo "#########   WHICH PEER NETWORK DO YOU WANT TO MANAGE #######"
 echo ""
-for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/" | sed -e 's/\[//g' -e 's/"//g' -e 's/,/ /g' -e 's/\]//g'); do
+#allNets "exit 0"
 
-	desc=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/$i" |jq '.name' | sed 's/"//g')
-
-	echo "$i   $desc" >> /tmp/file.tmp
-	 
-
-done
-# Dynamic menu from:
-# https://gist.github.com/nhoag/c202b3dd346668d6d8c1
-ENTITIES=$(cat /tmp/file.tmp)
-SELECTION=1
-
-while read -r line; do
-  echo "$SELECTION) $line"
-    ((SELECTION++))
-    done <<< "$ENTITIES"
-
-    ((SELECTION--))
-
-    echo
-    printf 'Select a number next to the network: '
-    read -r opt
-    if [[ `seq 1 $SELECTION` =~ $opt ]]; then
-
-	# Get the selection value
-     net=$(sed -n "${opt}p" <<< "$ENTITIES")
-
-    # Pop off the network ID
-    thenet=$(echo "${net}" | awk ' { print $1 } ')
+$theNet
 
 function peerManage() {
 
 	clear
 
-	tmpPeerFile='/tmp/ztnetwork-peerfile.tmp'
+	tmpPeerFile='tmp/ztnetwork-peerfile.tmp'
 
 	function delTemp() {
 
@@ -63,6 +44,9 @@ function peerManage() {
 
 	delTemp
 
+	echo "##################################################"
+	echo "Network ID and Name: ${net}"
+	echo "##################################################"
 	echo "1. List all peers"
 	echo "2. List all unauthorized peers"
 	echo "3. List only authorized peers"
@@ -80,11 +64,11 @@ function peerManage() {
 			# Add header to file
 			echo "Peer IP" > ${tmpPeerFile}
 
-			for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${thenet}/member"| egrep -o '[a-f0-9]{10}'); do
+			for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${theNet}/member"| egrep -o '[a-f0-9]{10}'); do
 
 				# Check if the member is authorized.
-				ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${thenet}/member/${themem}" |jq -r '.ipAssignments[]')
-				ifAuth=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${thenet}/member/${themem}" |jq '.authorized')
+				ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" |jq -r '.ipAssignments[]')
+				ifAuth=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" |jq '.authorized')
 	
 				# If the user is authorized, don't show them
 				if [[ ("${ifAuth}" =~ "false" && "${ifIP}" =~ "127.0.0.100") ]]; then
@@ -121,11 +105,11 @@ function peerManage() {
 			delTemp
 	
 			# Get all the members
-		    	for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${thenet}/member"| egrep -o '[a-f0-9]{10}'); do
+		    	for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${theNet}/member"| egrep -o '[a-f0-9]{10}'); do
 	
 				# Check if the member is authorized.
-				ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${thenet}/member/${themem}" |jq '.ipAssignments[0]')
-				ifAuth=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${thenet}/member/${themem}" |jq '.authorized')
+				ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" |jq '.ipAssignments[0]')
+				ifAuth=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" |jq '.authorized')
 	
 				# If the user is authorized, don't show them
 				if [[ "${ifIP}" =~ "127.0.0.100" || ("${ifAuth}" == "true") ]]; then
@@ -174,7 +158,7 @@ function peerManage() {
 						thePeer=$(sed -n "${opt}p" <<< "${PEERS}")
 						themem=$(echo "${thePeer}" | awk ' { print $1 } ')
 	
-						authed=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -X POST -d '{"authorized": true}' "${ztAddress}/${thenet}/member/${themem}")
+						authed=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -X POST -d '{"authorized": true}' "${ztAddress}/${theNet}/member/${themem}")
 					fi
 	
 				}
@@ -201,11 +185,11 @@ function peerManage() {
 				echo "Peer IP" > ${tmpPeerFile}
 
 				# Get all the members
-	    			for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${thenet}/member"| egrep -o '[a-f0-9]{10}'); do
+	    			for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${theNet}/member"| egrep -o '[a-f0-9]{10}'); do
 
 					# Check if the peer is authorized
-					ifAuth=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${thenet}/member/${themem}" | jq '.authorized')
-					ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${thenet}/member/${themem}" | jq -r '.ipAssignments[]')
+					ifAuth=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" | jq '.authorized')
+					ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" | jq -r '.ipAssignments[]')
 
 					# ...is so then display it.
 					if [[ "${ifAuth}" == "true" ]]; then
@@ -244,23 +228,15 @@ function peerManage() {
 			echo "Peer IP" > ${tmpPeerFile}
 
 			# Get all the members
-		    	for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${thenet}/member"| egrep -o '[a-f0-9]{10}'); do
+		    	for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${theNet}/member"| egrep -o '[a-f0-9]{10}'); do
 	
-				# Check if the member is authorized.
-				# Ignore 'deleted' members
-				ifAuth=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${thenet}/member/${themem}" |jq -r '.authorized','.ipAssignments[]')
+				# Check if the peer is authorized
+				ifAuth=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" | jq '.authorized')
+				ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" | jq -r '.ipAssignments[]')
 
-				# I was getting at null iteration error so extracting the IP using egrep
-				ifIP=$(echo ${ifAuth} | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')
-	
-				# If the user is 'deleted' or authorized, don't show them
-				if [[ "${ifAuth}" == "false" ]]; then
-	
-					continue
+				# ...is so then display it.
+				if [[ "${ifAuth}" == "true" ]]; then
 
-				else
-				
-					# Write results to the temp file.
 					echo "${themem} ${ifIP}" >> ${tmpPeerFile}
 
 				fi
@@ -299,7 +275,7 @@ function peerManage() {
 						thePeer=$(sed -n "${opt}p" <<< "${PEERS}")
 						themem=$(echo "${thePeer}" | awk ' { print $1 } ')
 	
-						unAuthed=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -X POST -d '{"authorized": false}' "${ztAddress}/${thenet}/member/${themem}" | jq -r '.authorized')
+						unAuthed=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -X POST -d '{"authorized": false}' "${ztAddress}/${theNet}/member/${themem}" | jq -r '.authorized')
 
 						if [[ "${unAuthed}" == "false" ]]; then
 
@@ -322,16 +298,12 @@ function peerManage() {
 
 					unAuthPeers
 
-
 				else 
-
 
 					echo "There are no unauthorized peers."
 					read -p "Press ENTER when done."
-
 	
 				fi
-	
 
 		;;
 
@@ -341,10 +313,10 @@ function peerManage() {
 			delTemp
 				
 			# Get all the members
-	    		for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${thenet}/member"| egrep -o '[a-f0-9]{10}'); do
+	    		for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${theNet}/member"| egrep -o '[a-f0-9]{10}'); do
 
 				# Check if the peer is authorized
-				ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${thenet}/member/${themem}" |jq '.ipAssignments[]')
+				ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" |jq '.ipAssignments[]')
 
 				if [[ "${ifIP}" =~ "127.0.0.100" ]]; then
 
@@ -391,11 +363,11 @@ function peerManage() {
 						# Get the member ID	
 						themem=$(echo "${thePeer}" | awk ' { print $1 } ')
 
-						delPeer=$(curl -s -X POST -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d '{"authorized": false}' "${ztAddress}/${thenet}/member/${themem}" | jq '.authorized')
+						delPeer=$(curl -s -X POST -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d '{"authorized": false}' "${ztAddress}/${theNet}/member/${themem}" | jq '.authorized')
 					fi
 	
 					# Peers can't be removed from the network so the IP is changed to 127.0.0.100 as a flag that it should not appear when listing members.
-					reIP=$(curl  -X POST -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  -d '{"ipAssignments":["127.0.0.100"]}' "${ztAddress}/${thenet}/member/${themem}" | jq '(.ipAssignments[] == "127.0.0.100")')
+					reIP=$(curl  -X POST -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  -d '{"ipAssignments":["127.0.0.100"]}' "${ztAddress}/${theNet}/member/${themem}" | jq '(.ipAssignments[] == "127.0.0.100")')
 
 		echo "DELPEER: ${delPeer}"
 		echo "REIP: ${reip}"
@@ -462,5 +434,5 @@ peerManage
 
 }
 
-fi
+#fi
 peerManage

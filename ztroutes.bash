@@ -4,9 +4,9 @@ source "functions.bash"
 
 tmpRouteFile='tmp/ztroutesfile.tmp'
 
+rm -f tmp/ztexistjson.tmp
+rm -f tmp/ztexistjson2.tmp
 
-	rm -f tmp/ztexistjson.tmp
-	rm -f tmp/ztexistjson2.tmp
 allNets "exit 0"
 
 #theNet=$(echo "${net}" | awk ' { print $1 } ')
@@ -69,6 +69,9 @@ function menu() {
 
 	clear
 
+	echo "########################################################"
+	echo "${net}"
+	echo "########################################################"
 	echo "1. List routes"
 	echo "2. Add a route"
 	echo "3. Delete a route"
@@ -254,7 +257,7 @@ function menu() {
 					
 			fi
 
-			if ! [[ ("${d}" =~ "${addRoute}" && "${g}" =~ "${addRoute}") ]]; then
+			if [[ ("${d}" =~ "${addRoute}" && "${g}" =~ "${addRoute}") ]]; then
 
 				echo "Route was not deleted."
 				del_temp
@@ -263,9 +266,8 @@ function menu() {
 
 			else
 
-				echo "Route was deleted added."
+				echo "Route was deleted."
 				get_routes
-				cat ${tmpRouteFile} | column -t -s "___"
 				currNet
 				allDone
 				del_temp

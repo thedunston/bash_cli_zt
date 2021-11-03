@@ -9,6 +9,7 @@ ztToken='/var/lib/zerotier-one/authtoken.secret'
 # Temp File
 tmpfile='tmp/znetwork.tmp'
 ztnetFile='tmp/ztcurrent.txt'
+peerTempFile='tmp/networks.tmp'
 
 # ZT Directory
 ztDir='/var/lib/zerotier-one'
