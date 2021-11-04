@@ -183,7 +183,7 @@ Hosts/Net: 2046                  Class C, Private Internet
 		echo "Network: $network"
 		read -p "Are the above settings okay? [Y|n]" netok
 
-		if [[ "${netok}" =~ ^(y|Y)$ ]] ; then
+		if [[ "${netok}" == "" || "${netok}" =~ ^(y|Y)$ ]] ; then
 
 			cnet=$(echo ${2} | sed 's/\"//g')
 
@@ -233,7 +233,7 @@ function genIP() {
 
 	read -p  "Would you like to autogenerate an IP range? [Y|n] or Enter to return to main menu: " autogen
 
-	if [[ "${autogen}" =~ ^(y|Y)$ ]]; then
+	if [[ "${autogen}" == "" ||  "${autogen}" =~ ^(y|Y)$ ]]; then
 
 		# Private ranges for the ZT Network
 		a=(10 192.168 172.16)
