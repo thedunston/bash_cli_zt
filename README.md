@@ -20,6 +20,8 @@ ipcalc is used to manage the creation of network settings, check for valid masks
 
 jq is used to create the JSON object for most queries. I'll get around to doing it for all queries.  It is mixed because as I was learning the ZT api, I used manual queries and then started using jq the more I learned how to use it.
 
+If you receive an error that "columns" is not found, then install bsdmainutils.
+
 Usage.  You need to run this as root to access the files needed for access to your ZT Controller:
 
 sudo bash ztnetworks.bash
