@@ -25,7 +25,7 @@
 ###  
 ###  Allow/deny port to an IP and only from a specific IP or network
 ###  accept:tcp:dport:22:srcip:192.168.69.40/32:destip:192.168.69.217/32
-###  deny:tcp:dport:22:srcip:192.168.69.40/32:destip:192.168.69.217/32
+###  drop:tcp:dport:22:srcip:192.168.69.40/32:destip:192.168.69.217/32
 ###  
 ###  # Action:protocol:direction:
 ###  # Allow ssh but not to 192.168.69.217

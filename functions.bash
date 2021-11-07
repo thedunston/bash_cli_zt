@@ -10,6 +10,7 @@ ztToken='/var/lib/zerotier-one/authtoken.secret'
 tmpfile='tmp/znetwork.tmp'
 ztnetFile='tmp/ztcurrent.txt'
 peerTempFile='tmp/networks.tmp'
+tmpPeerFile='tmp/ztnetwork-peerfile.tmp'
 
 # ZT Directory
 ztDir='/var/lib/zerotier-one'
@@ -333,6 +334,17 @@ function allNets() {
 
 	if [[ ${opt} =~ ^(b|B)$ ]]; then
 
+		# This is due to the changed to the flow directory
+		#  and having to back out of that directory
+		if [[ "${1}" =~ ":flows" ]]; then
+
+			cd ..
+			theMenu=$(echo ${1} | cut -d: -f1)
+			${theMenu}
+			
+
+		fi
+
 		${1}
 	fi
 
@@ -359,7 +371,7 @@ function currNet(){
 # Check that the number is valid entered
 function checkNum() {
 
-	if ! [[ ${1} =~ ^[0-9]$ || ${1} =~ ^b|B$ ]]; then
+	if ! [[ ${1} =~ ^[0-9]$ || ${1} =~ ^(b|B)$ ]]; then
 
 		allDone "A numeric selection is required" "mainMenu"
 

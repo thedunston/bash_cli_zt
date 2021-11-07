@@ -115,7 +115,6 @@ function updateDesc() {
 
 }
 
-clear
 function  mainMenu() {
 
 	# Remove temp file
@@ -124,10 +123,12 @@ function  mainMenu() {
 		rm -f ${tmpfile}
 
 	fi
-		echo "################################"
-		echo "  ZeroTier Manager Controller   "
-		echo "################################"
-		echo ""
+
+	clear
+	echo "################################"
+	echo "  ZeroTier Manager Controller   "
+	echo "################################"
+	echo ""
 
 	echo "1. Create a new ZT Network on this controller"
 	echo "2. Delete a ZT Network on this controller"
@@ -144,10 +145,14 @@ function  mainMenu() {
 	case "${todo}" in
 
 		1)
+
+			clear
 			createNet
 		;;
 
 		2)
+
+		clear
 
 		echo "Please wait..."
 
@@ -185,16 +190,19 @@ function  mainMenu() {
 		;;
 
 		3)
+
+			clear
 			bash peer.bash
 
 		;;
 
 		4) # Edit rules file
 
+			clear
 			cd flowRules
 
 			# List networks
-			allNets
+			allNets "mainMenu:flows"
 
 			# The network the user selected
 			editNet=$(echo "${net}" | awk ' { print $1 } ')
@@ -242,7 +250,10 @@ function  mainMenu() {
 
 		;;
 
-		5) bash listnets.bash
+		5)
+
+			clear
+			bash listnets.bash
 
 
 		;;
@@ -250,17 +261,21 @@ function  mainMenu() {
 
 		6)
 
+			clear
+
 			bash ztroutes.bash
 
 		;;
 		7)  # Update network description
 
+			clear
 			updateDesc
 
 		;;
 
 		8) # Update Network IP Assignment
 
+			clear
 
 			updateNetIP
 
@@ -268,6 +283,7 @@ function  mainMenu() {
 
 		a|A)
 
+			clear
 			bash advancedZT.bash
 
 		;;
@@ -292,6 +308,5 @@ function  mainMenu() {
 	mainMenu
 
 }
-
 
 mainMenu
