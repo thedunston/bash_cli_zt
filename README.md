@@ -4,9 +4,9 @@ If you want a nice GUI progrm: zeroui- https://github.com/dec0dOS/zero-ui - has 
 
 Here are some YouTube videos I created on using ZeroTier:
 
-- Private ZeroTier Network on the Public Internet - https://www.youtube.com/watch?v=xp2ujXe1SOU
-- ZeroTier Hub and Spoke - https://www.youtube.com/watch?v=Fb65bU3oyEo
-- bash_cli_zt for for self-hosted controllers - https://www.youtube.com/watch?v=C2HS3cQZY5U
+- Private ZeroTier Network on the Public Internet - https://www.youtube.com/watch?v=xp2ujXe1SOU - The ZeroTier root servers are blocked so that only your Moons are used for managing your ZT nodes.
+- ZeroTier Hub and Spoke - https://www.youtube.com/watch?v=Fb65bU3oyEo - Shows how to configure one of your ZT Linux gateways to allow access to other networks it can access.
+- bash_cli_zt for for self-hosted controllers - https://www.youtube.com/watch?v=C2HS3cQZY5U - Shows how to use these scripts.
 
 Here is a project I was working on to create a ZT controller manager for some basic tasks using Bash since I tend to use the commandline a lot.
 
@@ -40,8 +40,9 @@ Features:
 - Update network description, IP assignments and manage routes
 - Edit ACLs using custom format only for IPv4
 - Manage Peers
+- Add node names and description
 
-I teach full-time and working on a degree so will work on this as I have time.  I hope it helps someone and folks contribute code.
+I teach full-time and working on my doctorate degree so will work on this as I have time.  I hope it helps someone and folks contribute code.
 
 -duane
 
