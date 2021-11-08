@@ -1,5 +1,13 @@
 # bash_cli_zt
 
+If you want a nice GUI progrm: zeroui- https://github.com/dec0dOS/zero-ui - has a very nice interface.  I have an instance running, but always default to the commandline so I continue using my bash scripts.  I installed UserLand on my Pixel, installed zerotier, and my bash scripts and it worked quite well.
+
+Here are some YouTube videos I created on using ZeroTier:
+
+- Private ZeroTier Network on the Public Internet - https://www.youtube.com/watch?v=xp2ujXe1SOU
+- ZeroTier Hub and Spoke - https://www.youtube.com/watch?v=Fb65bU3oyEo
+- bash_cli_zt for for self-hosted controllers - https://www.youtube.com/watch?v=C2HS3cQZY5U
+
 Here is a project I was working on to create a ZT controller manager for some basic tasks using Bash since I tend to use the commandline a lot.
 
 It includes:
