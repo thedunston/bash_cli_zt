@@ -167,7 +167,7 @@ Hosts/Net: 2046                  Class C, Private Internet
 	else 
 
 		# ipcalc does all the work.
-		get_net=$(ipcalc ${ipnet}${netmask})
+		get_net=$(ipcalc ${1}${netmask})
 
 		# Starting IP in DHCP Pool
 		min=$(echo ${get_net} | egrep -o "HostMin: [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | cut -d: -f2  | sed 's/[[:space:]]//g' )
@@ -256,10 +256,6 @@ function genIP() {
 			ipnet="192.168.$((RANDOM%254)).1"
 
 		fi
-
-	elif [[  "${autogen}" == "" ]]; then
-
-		mainMenu
 
 	else 
 
@@ -371,7 +367,7 @@ function currNet(){
 # Check that the number is valid entered
 function checkNum() {
 
-	if ! [[ ${1} =~ ^[0-9]$ || ${1} =~ ^(b|B)$ ]]; then
+	if ! [[ ${1} =~ ^([0-9]{1,2})$ || ${1} =~ ^(b|B)$ ]]; then
 
 		allDone "A numeric selection is required" "mainMenu"
 
