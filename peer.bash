@@ -28,7 +28,7 @@ echo ""
 # doesn't exist and members
 if [[ ! -d "networks/${theNet}" ]]; then
 	
-	mkdir "networks/${theNet}"
+	mkdir -p "networks/${theNet}"
 	
 fi
 
