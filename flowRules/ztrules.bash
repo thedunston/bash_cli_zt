@@ -3,11 +3,10 @@
 # Script to parse ZT Rules
 source "../functions.bash"
 
-the_network="$(echo ${1} | cut -d\. -f1)"
+the_network="$(cat 'tmp/ztcurrent.txt')"
 
-config_file="${1}.json"
-tmp_file="ztconfig-${the_network}.tmp"
-
+config_file="${the_network}.json"
+tmp_file="ztconfig-${the_network}.config.tmp"
 
 # Get the port from the config file and direction
 function get_port() {
@@ -25,7 +24,6 @@ function get_port() {
 
 	fi
 }
-
 
 function get_action() {
 
@@ -193,8 +191,16 @@ while read line; do
 
 	fi
 
-	if [[ "${line}" == "drop:udp" ]]; then
+	if [[ "${line}" =~ ^tee\ -1\ [0-9a-z]{10}$ ]]; then
 
+		ztnode=$(echo "${line}" | awk ' { print $3 } ')
+		length=$(echo "${line}" | awk ' { print $2 } ')
+		# Write Results
+ 		echo "{ \"address\": \"${ztnode}\", \"length\": ${length},\"type\": \"ACTION_TEE\"}," >> ${tmp_file}
+
+	fi
+
+	if [[ "${line}" == "drop:udp" ]]; then
 
 		# Write Results
 		echo '{"ipProtocol": 17, "not": false, "or": false, "type": "MATCH_IP_PROTOCOL" },{"type": "ACTION_DROP"},' >> ${tmp_file}

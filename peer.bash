@@ -142,6 +142,7 @@ function peerManage() {
 	echo "4. Deauthorize a peer"
 	echo "5. 'Delete' a peer"
 	echo "6. Add/Change a peer's name or description"
+	echo "7. 'UnDelete' a peer"
 	echo "[Z] Back to Network Configuration Main Menu"
 	echo "[E] Exit Program"
 	read -p " Please select a number value: " todo
@@ -536,6 +537,86 @@ function peerManage() {
 
 		;;
 
+		7)
+
+			clear
+
+			delTemp
+			
+			# Get all the members
+	    		for themem in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" "${ztAddress}/${theNet}/member"| egrep -o '[a-f0-9]{10}'); do
+
+				# Check if the peer is authorized
+				ifIP=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/${theNet}/member/${themem}" |jq '.ipAssignments[]')
+
+				if [[ "${ifIP}" != "\"127.0.0.100\"" ]]; then
+
+					continue
+
+				else
+	
+					# Get existing Peer Info
+					existingPeerInfo	
+
+					echo "${themem} ${exPeerName}" >> ${tmpPeerFile}
+
+				fi
+
+			done
+
+			# deAuthorize a peer
+			function deAuthPeers() {
+
+				selectMem "Undelete"
+
+				# Authorize the member
+				if [[ $(seq 1 $SELECTION) =~ $opt ]]; then
+				
+					# Get the selection value
+					thePeer=$(sed -n "${opt}p" <<< "${PEERS}")
+					
+					# Get the member ID	
+					themem=$(echo "${thePeer}" | awk ' { print $1 } ')
+
+					delPeer=$(curl -s -X POST -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)" -d '{"authorized": false}' "${ztAddress}/${theNet}/member/${themem}" | jq '.authorized')
+
+				fi
+
+				# Unset the 127.0.0.100 IP.
+				reIP=$(curl -X POST -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  -d '{"ipAssignments":[]}' "${ztAddress}/${theNet}/member/${themem}" | jq '(.ipAssignments[] == "")')
+
+				# Should return nothing if it was successfully undeleted.
+				if [[ "${reIP}" == "" ]]; then
+
+					# UnDelete Peer information
+					touch networks/${theNet}/${themem}
+					echo "Peer: ${themem} 'was undeleted'"
+					read -p "Press ENTER when done."
+
+				else
+
+					echo "Peer: ${themem} was not undeleted."
+					read -p "Press ENTER when done."
+					peerManage
+
+				fi
+			}
+
+			# Check to see if there are any peers
+			if [[ -f ${tmpPeerFile} ]]; then
+
+				deAuthPeers
+
+			else
+
+				echo "There are no peers to undelete."
+				read -p "Press ENTER when done."
+
+	
+			fi
+
+
+		;;
 		z|Z) # Back to Main configuration
 
 			bash ztnetworks.bash
