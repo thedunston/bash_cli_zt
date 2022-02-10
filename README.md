@@ -1,5 +1,7 @@
 # bash_cli_zt
 
+Status: Actively supported.
+
 If you want a nice GUI progrm: zeroui- https://github.com/dec0dOS/zero-ui - has a very nice interface.  I have an instance running, but always default to the commandline so I continue using my bash scripts.  I installed UserLand on my Pixel, installed zerotier, and my bash scripts and it worked quite well.
 
 Here are some YouTube videos I created on using ZeroTier:
