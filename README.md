@@ -9,6 +9,7 @@ Here are some YouTube videos I created on using ZeroTier:
 - Private ZeroTier Network on the Public Internet - https://www.youtube.com/watch?v=xp2ujXe1SOU - The ZeroTier root servers are blocked so that only your Moons are used for managing your ZT nodes.
 - ZeroTier Hub and Spoke - https://www.youtube.com/watch?v=Fb65bU3oyEo - Shows how to configure one of your ZT Linux gateways to allow access to other networks it can access.
 - bash_cli_zt for for self-hosted controllers - https://www.youtube.com/watch?v=C2HS3cQZY5U - Shows how to use these scripts.
+- bash_zt_auth - authorize a ZT client via SSH authentication - https://www.youtube.com/watch?v=7lQlmLD9KW4
 
 Here is a project I was working on to create a ZT controller manager for some basic tasks using Bash since I tend to use the commandline a lot.
 
