@@ -1,6 +1,6 @@
 # bash_cli_zt
 
-Status: Actively supported.
+Status: Actively supported. The project is still being supported. I am in the process of converting this code to Go. I was going to create a Powershell version, but decided to use Go so I can have one codebase to allow self-hosting on multiiple platforms.
 
 License: [GMU GPL v3.0](https://github.com/thedunston/bash_cli_zt/blob/main/LICENSE.md)
 
