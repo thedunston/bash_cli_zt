@@ -298,7 +298,7 @@ function allNets() {
 	echo "   Network___Description___RangeStart___RangeEnd" > ${tmpfile}
 
 	# Get all Networks
-	for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/" | egrep -o '[a-f0-9]{16}'); do
+	for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}" | egrep -o '[a-f0-9]{16}'); do
 
 		# Get the network's name
 	        desc=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/$i" |jq '.name' | sed 's/"//g')

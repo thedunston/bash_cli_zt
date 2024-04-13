@@ -8,7 +8,7 @@ tmpfile='tmp/file.tmp'
 rm -f ${tmpfile}
 echo "   Network___Description___RangeStart___RangeEnd" > ${tmpfile}
 
-for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/" | egrep -o '[a-f0-9]{16}'
+for i in $(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}" | egrep -o '[a-f0-9]{16}'
 ); do
 
         desc=$(curl -s -H "X-ZT1-Auth: $(cat /var/lib/zerotier-one/authtoken.secret)"  "${ztAddress}/$i" |jq '.name' | sed 's/"//g')
