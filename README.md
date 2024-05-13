@@ -1,6 +1,6 @@
 # bash_cli_zt
 
-Status: Actively supported.
+Status: Actively supported. My recommendation is to start using the new program https://github.com/go_cli_zt
 
 License: [GMU GPL v3.0](https://github.com/thedunston/bash_cli_zt/blob/main/LICENSE.md)
 
