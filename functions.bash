@@ -167,7 +167,7 @@ Hosts/Net: 2046                  Class C, Private Internet
 	else 
 
 		# ipcalc does all the work.
-		get_net=$(ipcalc ${1}${netmask})
+		get_net=$(ipcalc ${1}/${netmask})
 
 		# Starting IP in DHCP Pool
 		min=$(echo ${get_net} | egrep -o "HostMin: [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | cut -d: -f2  | sed 's/[[:space:]]//g' )
