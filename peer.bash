@@ -468,6 +468,9 @@ function peerManage() {
 				# Get the selection value
 				thePeer=$(sed -n "${opt}p" <<< "${PEERS}")
 
+				# Get the member ID
+				themem=$(echo "${thePeer}" | awk ' { print $1 } ')
+
 				existingPeerInfo
 
 				# Existing Information
@@ -490,8 +493,6 @@ function peerManage() {
 					exPeerDesc="empty"
 
 				fi
-				# Get the member ID
-				themem=$(echo "${thePeer}" | awk ' { print $1 } ')
 
 				echo "${themem_info}"
 				# Prompt for the user
