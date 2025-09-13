@@ -1,7 +1,8 @@
 # Various functions for the program
 
 # ZeroTier network address
-ztAddress='http://127.0.0.1:9993/controller/network'
+ztAddr='http://127.0.0.1:9993'
+ztAddress="$ztAddr/controller/network"
 
 # Token file
 ztToken='/var/lib/zerotier-one/authtoken.secret'
